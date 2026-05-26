@@ -63,7 +63,7 @@ async function main(): Promise<void> {
         { session },
       );
       const divByName = new Map<string, mongoose.Types.ObjectId>();
-      for (const d of divDocs) divByName.set(d.name, d._id as mongoose.Types.ObjectId);
+      for (const d of divDocs) divByName.set(d.name, d._id as unknown as mongoose.Types.ObjectId);
 
       const teamPayload = parsed.teams.map((t) => {
         const divId = divByName.get(t.divisionName);
