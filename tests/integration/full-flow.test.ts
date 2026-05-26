@@ -38,20 +38,10 @@ const state = {
   settings: null as SettingsState | null,
 };
 
-function leanResult<T>(value: T) {
-  return Promise.resolve(value);
-}
 function leanChain<T>(value: T) {
   return {
     sort: () => leanChain(value),
-    lean: () => leanResult(value),
-  };
-}
-function findChain<T>(filter: (x: T) => boolean, source: T[]) {
-  const data = source.filter(filter);
-  return {
-    sort: () => findChain(filter, source),
-    lean: () => Promise.resolve(data),
+    lean: () => Promise.resolve(value),
   };
 }
 
@@ -101,7 +91,7 @@ vi.mock('../../src/models/index.js', () => {
         const arr = q.judgeId
           ? state.evaluations.filter((e) => String(e.judgeId) === String(q.judgeId))
           : state.evaluations.slice();
-        return findChain(() => true, arr);
+        return leanChain(arr);
       }),
       findOne: vi.fn((q: { judgeId: mongoose.Types.ObjectId; teamId: mongoose.Types.ObjectId }) => {
         const ev = state.evaluations.find(

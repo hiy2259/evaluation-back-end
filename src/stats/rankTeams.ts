@@ -52,9 +52,6 @@ interface TeamScratch {
 }
 
 export function rankTeams({ evaluations, criteria, teams }: RankTeamsInput): RankedTeam[] {
-  const teamById = new Map<string, ITeam>();
-  for (const t of teams) teamById.set(String(t._id), t);
-
   const scratch = new Map<string, TeamScratch>();
   for (const t of teams) {
     scratch.set(String(t._id), {
@@ -64,9 +61,6 @@ export function rankTeams({ evaluations, criteria, teams }: RankTeamsInput): Ran
       perCriterionRaw: new Map(),
     });
   }
-
-  const criterionById = new Map<string, ICriterion>();
-  for (const c of criteria) criterionById.set(String(c._id), c);
 
   for (const ev of evaluations) {
     const teamId = String(ev.teamId);
