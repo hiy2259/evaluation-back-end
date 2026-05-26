@@ -53,10 +53,12 @@ export function createApp() {
 }
 
 async function main() {
-  await connectDb();
   const app = createApp();
   app.listen(config.port, () => {
     console.log(`[server] listening on :${config.port} (${config.env})`);
+  });
+  connectDb().catch((err) => {
+    console.error('[db] giving up after retries:', (err as Error).message);
   });
 }
 
