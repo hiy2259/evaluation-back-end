@@ -9,6 +9,7 @@ import teamsRouter from './routes/teams.js';
 import criteriaRouter from './routes/criteria.js';
 import meRouter from './routes/me.js';
 import adminRouter from './routes/admin.js';
+import statsRouter from './routes/stats.js';
 
 export function createApp() {
   const app = express();
@@ -37,6 +38,7 @@ export function createApp() {
   app.use('/api/criteria', criteriaRouter);
   app.use('/api/me', meRouter);
   app.use('/api/admin', adminRouter);
+  app.use('/api/stats', statsRouter);
 
   app.use((req, res) => {
     res.status(404).json({ error: 'not_found', path: req.path });

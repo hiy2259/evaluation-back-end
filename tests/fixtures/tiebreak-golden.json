@@ -1,0 +1,99 @@
+{
+  "criteria": [
+    { "_id": "c1", "name": "문제 정의 명확성", "weight": 20, "indicator": "", "order": 1 },
+    { "_id": "c2", "name": "구현 실현 가능성", "weight": 30, "indicator": "", "order": 2 },
+    { "_id": "c3", "name": "차별성·독창성",   "weight": 20, "indicator": "", "order": 3 },
+    { "_id": "c4", "name": "업무 혁신성",     "weight": 15, "indicator": "", "order": 4 },
+    { "_id": "c5", "name": "확산 파급력",     "weight": 15, "indicator": "", "order": 5 }
+  ],
+  "cases": [
+    {
+      "id": "G1",
+      "description": "0차 가중 총점만으로 결정",
+      "teams": [
+        { "_id": "t1", "divisionId": "d1" },
+        { "_id": "t2", "divisionId": "d1" }
+      ],
+      "evaluations": [
+        { "judgeId": "j1", "teamId": "t1", "scores": { "c1": 5, "c2": 5, "c3": 5, "c4": 5, "c5": 5 } },
+        { "judgeId": "j1", "teamId": "t2", "scores": { "c1": 3, "c2": 3, "c3": 3, "c4": 3, "c5": 3 } }
+      ],
+      "expected": {
+        "order": ["t1", "t2"],
+        "needsTfDecision": { "t1": false, "t2": false }
+      }
+    },
+    {
+      "id": "G2",
+      "description": "0차 동점 → 1차 구현(c2) raw 평균에서 결정",
+      "teams": [
+        { "_id": "t1", "divisionId": "d1" },
+        { "_id": "t2", "divisionId": "d1" }
+      ],
+      "evaluations": [
+        { "judgeId": "j1", "teamId": "t1", "scores": { "c1": 5, "c2": 5, "c3": 5, "c4": 3, "c5": 5 } },
+        { "judgeId": "j1", "teamId": "t2", "scores": { "c1": 5, "c2": 4, "c3": 5, "c4": 5, "c5": 5 } }
+      ],
+      "expected": {
+        "order": ["t1", "t2"],
+        "needsTfDecision": { "t1": false, "t2": false }
+      }
+    },
+    {
+      "id": "G3",
+      "description": "0~2차 동점 → 3차 문제정의(c1) raw 평균에서 결정",
+      "teams": [
+        { "_id": "t1", "divisionId": "d1" },
+        { "_id": "t2", "divisionId": "d1" }
+      ],
+      "evaluations": [
+        { "judgeId": "j1", "teamId": "t1", "scores": { "c1": 4, "c2": 5, "c3": 5, "c4": 1, "c5": 5 } },
+        { "judgeId": "j1", "teamId": "t2", "scores": { "c1": 1, "c2": 5, "c3": 5, "c4": 5, "c5": 5 } }
+      ],
+      "expected": {
+        "order": ["t1", "t2"],
+        "needsTfDecision": { "t1": false, "t2": false }
+      }
+    },
+    {
+      "id": "G4",
+      "description": "0~3차 동점 → 4차 STDEV asc (작을수록 우선)",
+      "teams": [
+        { "_id": "t1", "divisionId": "d1" },
+        { "_id": "t2", "divisionId": "d1" }
+      ],
+      "evaluations": [
+        { "judgeId": "j1", "teamId": "t1", "scores": { "c1": 4, "c2": 4, "c3": 4, "c4": 4, "c5": 4 } },
+        { "judgeId": "j2", "teamId": "t1", "scores": { "c1": 4, "c2": 4, "c3": 4, "c4": 4, "c5": 4 } },
+        { "judgeId": "j3", "teamId": "t1", "scores": { "c1": 4, "c2": 4, "c3": 4, "c4": 4, "c5": 4 } },
+        { "judgeId": "j1", "teamId": "t2", "scores": { "c1": 4, "c2": 4, "c3": 4, "c4": 4, "c5": 4 } },
+        { "judgeId": "j2", "teamId": "t2", "scores": { "c1": 4, "c2": 5, "c3": 4, "c4": 3, "c5": 4 } },
+        { "judgeId": "j3", "teamId": "t2", "scores": { "c1": 4, "c2": 3, "c3": 4, "c4": 5, "c5": 4 } }
+      ],
+      "expected": {
+        "order": ["t1", "t2"],
+        "needsTfDecision": { "t1": false, "t2": false }
+      }
+    },
+    {
+      "id": "G5",
+      "description": "4차까지 동점 → needsTfDecision=true",
+      "teams": [
+        { "_id": "t1", "divisionId": "d1" },
+        { "_id": "t2", "divisionId": "d1" }
+      ],
+      "evaluations": [
+        { "judgeId": "j1", "teamId": "t1", "scores": { "c1": 4, "c2": 4, "c3": 4, "c4": 4, "c5": 4 } },
+        { "judgeId": "j2", "teamId": "t1", "scores": { "c1": 4, "c2": 4, "c3": 4, "c4": 4, "c5": 4 } },
+        { "judgeId": "j3", "teamId": "t1", "scores": { "c1": 4, "c2": 4, "c3": 4, "c4": 4, "c5": 4 } },
+        { "judgeId": "j1", "teamId": "t2", "scores": { "c1": 4, "c2": 4, "c3": 4, "c4": 4, "c5": 4 } },
+        { "judgeId": "j2", "teamId": "t2", "scores": { "c1": 4, "c2": 4, "c3": 4, "c4": 4, "c5": 4 } },
+        { "judgeId": "j3", "teamId": "t2", "scores": { "c1": 4, "c2": 4, "c3": 4, "c4": 4, "c5": 4 } }
+      ],
+      "expected": {
+        "order": ["t1", "t2"],
+        "needsTfDecision": { "t1": true, "t2": true }
+      }
+    }
+  ]
+}
