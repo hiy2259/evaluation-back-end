@@ -28,7 +28,7 @@ export function createApp() {
   );
   app.use(express.json({ limit: '256kb' }));
 
-  app.get('/healthz', (_req, res) => {
+  app.get(['/healthz', '/status'], (_req, res) => {
     res.json({ ok: true, env: config.env, ts: new Date().toISOString() });
   });
 
