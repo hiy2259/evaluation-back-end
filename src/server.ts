@@ -3,10 +3,17 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { config } from './config.js';
 import { connectDb } from './db.js';
+import authRouter from './routes/auth.js';
+import evaluationsRouter from './routes/evaluations.js';
+import teamsRouter from './routes/teams.js';
+import criteriaRouter from './routes/criteria.js';
+import meRouter from './routes/me.js';
+import adminRouter from './routes/admin.js';
 
 export function createApp() {
   const app = express();
 
+  app.set('trust proxy', 1);
   app.use(helmet());
   app.use(
     cors({
@@ -23,6 +30,13 @@ export function createApp() {
   app.get('/healthz', (_req, res) => {
     res.json({ ok: true, env: config.env, ts: new Date().toISOString() });
   });
+
+  app.use('/api/auth', authRouter);
+  app.use('/api/evaluations', evaluationsRouter);
+  app.use('/api/teams', teamsRouter);
+  app.use('/api/criteria', criteriaRouter);
+  app.use('/api/me', meRouter);
+  app.use('/api/admin', adminRouter);
 
   app.use((req, res) => {
     res.status(404).json({ error: 'not_found', path: req.path });
