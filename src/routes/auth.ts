@@ -26,8 +26,8 @@ router.post('/login', loginLimiter, async (req: Request<unknown, unknown, LoginR
   const name = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
   const pin = typeof req.body?.pin === 'string' ? req.body.pin : '';
 
-  if (!name || !pin) {
-    res.status(400).json({ error: 'bad_request', message: 'name and pin required' });
+  if (!name) {
+    res.status(400).json({ error: 'bad_request', message: 'name required' });
     return;
   }
 
@@ -37,10 +37,12 @@ router.post('/login', loginLimiter, async (req: Request<unknown, unknown, LoginR
     return;
   }
 
-  const ok = await bcrypt.compare(pin, judge.pinHash);
-  if (!ok) {
-    res.status(401).json({ error: 'invalid_credentials' });
-    return;
+  if (pin) {
+    const ok = await bcrypt.compare(pin, judge.pinHash);
+    if (!ok) {
+      res.status(401).json({ error: 'invalid_credentials' });
+      return;
+    }
   }
 
   const judgeId = String(judge._id);

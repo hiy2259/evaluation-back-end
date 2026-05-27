@@ -68,10 +68,19 @@ describe('POST /api/auth/login', () => {
     expect(res.body).toEqual({ error: 'invalid_credentials' });
   });
 
-  it('400 on missing body', async () => {
+  it('200 + JWT with name only (no PIN)', async () => {
+    findOne.mockReturnValueOnce({ lean: () => Promise.resolve(judgeDoc) });
     const res = await request(buildApp())
       .post('/api/auth/login')
-      .send({ name: '', pin: '' });
+      .send({ name: 'Alice' });
+    expect(res.status).toBe(200);
+    expect(res.body.token).toBeTypeOf('string');
+  });
+
+  it('400 when name missing', async () => {
+    const res = await request(buildApp())
+      .post('/api/auth/login')
+      .send({ name: '' });
     expect(res.status).toBe(400);
   });
 
