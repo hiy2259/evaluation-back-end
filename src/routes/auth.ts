@@ -26,21 +26,21 @@ router.post('/login', loginLimiter, async (req: Request<unknown, unknown, LoginR
   const name = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
   const pin = typeof req.body?.pin === 'string' ? req.body.pin : '';
 
-  if (!name) {
-    res.status(400).json({ error: 'bad_request', message: 'name required' });
+  if (!name || !/^\d{4}$/.test(pin)) {
+    res.status(400).json({ error: 'bad_request', message: 'name and 4-digit pin required' });
     return;
   }
 
-  const judge = await Judge.findOne({ name, active: true }).lean();
+  let judge = await Judge.findOne({ name, active: true }).lean();
+
   if (!judge) {
-    res.status(401).json({ error: 'invalid_credentials' });
-    return;
-  }
-
-  if (pin) {
+    const pinHash = await bcrypt.hash(pin, config.bcryptRounds);
+    const created = await Judge.create({ name, pinHash, role: 'judge', active: true });
+    judge = created.toObject();
+  } else {
     const ok = await bcrypt.compare(pin, judge.pinHash);
     if (!ok) {
-      res.status(401).json({ error: 'invalid_credentials' });
+      res.status(401).json({ error: 'invalid_credentials', message: '이름 또는 PIN이 일치하지 않습니다' });
       return;
     }
   }
