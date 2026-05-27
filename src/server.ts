@@ -22,6 +22,9 @@ export function createApp() {
       origin: (origin, cb) => {
         if (!origin) return cb(null, true);
         if (config.corsOrigins.includes(origin)) return cb(null, true);
+        if (config.corsAllowVercel && /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) {
+          return cb(null, true);
+        }
         return cb(new Error(`CORS blocked: ${origin}`));
       },
       credentials: true,

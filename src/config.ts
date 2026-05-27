@@ -20,6 +20,7 @@ export const config = {
     .split(',')
     .map((o) => o.trim())
     .filter(Boolean),
+  corsAllowVercel: (process.env.CORS_ALLOW_VERCEL ?? 'true').toLowerCase() === 'true',
   bcryptRounds: Number(process.env.BCRYPT_ROUNDS ?? 10),
   loginRateLimit: {
     max: Number(process.env.LOGIN_RATE_LIMIT_MAX ?? 10),
