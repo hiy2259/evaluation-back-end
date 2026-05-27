@@ -1,6 +1,7 @@
 import express, { type Request, type Response, type NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import mongoose from 'mongoose';
 import { config } from './config.js';
 import { connectDb } from './db.js';
 import authRouter from './routes/auth.js';
@@ -29,8 +30,18 @@ export function createApp() {
   app.use(express.json({ limit: '256kb' }));
 
   app.get(['/healthz', '/status'], (_req, res) => {
-    res.json({ ok: true, env: config.env, ts: new Date().toISOString() });
+    res.json({ ok: true, env: config.env, ts: new Date().toISOString(), db: mongoose.connection.readyState });
   });
+
+  if (process.env.NODE_ENV !== 'test') {
+    app.use('/api', (_req, res, next) => {
+      if (mongoose.connection.readyState !== 1) {
+        res.status(503).json({ error: 'db_unavailable', message: 'database not connected' });
+        return;
+      }
+      next();
+    });
+  }
 
   app.use('/api/auth', authRouter);
   app.use('/api/evaluations', evaluationsRouter);
